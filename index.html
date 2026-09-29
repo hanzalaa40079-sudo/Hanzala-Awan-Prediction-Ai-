@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#06110d">
+  <meta name="description" content="Awan Prediction AI - live forex analysis and two-candle experimental predictions">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="profile.jpg">
+  <title>Awan Prediction AI</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="profile.jpg" class="avatar" alt="Awan">
+        <div><strong>AWAN</strong><span>Prediction AI</span></div>
+      </div>
+      <div class="status"><i></i><span id="connectionText">Waiting for data</span></div>
+      <button id="settingsBtn" class="icon-btn" title="Settings">⚙</button>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="founder-card">
+          <img src="profile.jpg" alt="Founder">
+          <div class="script">Syco Awan</div>
+          <small>FOUNDER</small>
+        </div>
+        <nav>
+          <button class="nav active">▥ <span>Live Chart</span></button>
+          <button class="nav" id="backtestBtn">◈ <span>Backtest</span></button>
+          <button class="nav" id="strategyBtn">⌁ <span>Strategy</span></button>
+          <button class="nav" id="aboutBtn">ⓘ <span>About</span></button>
+        </nav>
+        <div class="side-note">REAL DATA<br><b>REAL ANALYSIS</b><br>EXPERIMENTAL RESULTS</div>
+      </aside>
+
+      <section class="workspace">
+        <div class="toolbar">
+          <select id="pairSelect" aria-label="Currency pair">
+            <optgroup label="LIVE FOREX">
+              <option>EUR/USD</option><option>GBP/USD</option><option>USD/JPY</option>
+              <option>USD/CHF</option><option>AUD/USD</option><option>USD/CAD</option>
+              <option>NZD/USD</option><option>EUR/GBP</option><option>EUR/JPY</option><option>GBP/JPY</option>
+              <option>AUD/CAD</option><option>AUD/JPY</option><option>CAD/JPY</option><option>CHF/JPY</option>
+            </optgroup>
+            <optgroup label="QUOTEX-STYLE OTC">
+              <option>EUR/USD (OTC)</option><option>GBP/USD (OTC)</option><option>AUD/CAD (OTC)</option>
+              <option>USD/JPY (OTC)</option><option>EUR/JPY (OTC)</option><option>GBP/JPY (OTC)</option>
+              <option>AUD/USD (OTC)</option><option>USD/CAD (OTC)</option>
+            </optgroup>
+          </select>
+          <div class="timeframes" id="timeframes">
+            <button data-tf="1min" class="selected">1m</button>
+            <button data-tf="5min">5m</button>
+            <button data-tf="15min">15m</button>
+            <button data-tf="30min">30m</button>
+            <button data-tf="1h">1h</button>
+            <button data-tf="4h">4h</button>
+            <button data-tf="1day">1D</button>
+          </div>
+          <div class="price" id="price">—</div>
+          <button id="tradingViewBtn" class="tool-btn" type="button">TradingView ↗</button>
+          <button id="historyBtn" class="tool-btn" type="button">History</button>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-head">
+            <div>
+              <b id="pairLabel">EUR/USD</b>
+              <span id="ohlc">O — H — L — C —</span>
+            </div>
+            <div class="candle-clock"><b id="candleCountdown">01:00</b><span id="candleTimes">START — · END —</span><small id="signalLock">WAITING</small></div><span class="live-dot">● LIVE</span>
+          </div>
+          <div id="chart"></div>
+          <div class="prediction-marker" id="predictionMarker"><span class="legend-up">●</span> Predicted UP <span class="legend-down">●</span> Predicted DOWN</div>
+        </div>
+
+        <div class="indicator-row">
+          <div><span>RSI(14)</span><b id="rsi">—</b></div>
+          <div><span>EMA(9)</span><b id="ema9">—</b></div>
+          <div><span>EMA(21)</span><b id="ema21">—</b></div>
+          <div><span>ATR(14)</span><b id="atr">—</b></div>
+          <div><span>Trend</span><b id="trend">—</b></div>
+        </div>
+      </section>
+
+      <aside class="rightbar">
+        <div class="panel prediction">
+          <div class="panel-title">Next 2 Candles</div>
+          <div class="forecast" id="forecast1">
+            <div><small>CANDLE 1 · NEXT</small><strong class="neutral">WAIT</strong></div>
+            <span class="confidence">—%</span>
+          </div>
+          <div class="forecast" id="forecast2">
+            <div><small>CANDLE 2 · AFTER NEXT</small><strong class="neutral">WAIT</strong></div>
+            <span class="confidence">—%</span>
+          </div>
+          <div class="disclaimer">Signal is model output, not a guarantee.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">AI Analysis</div>
+          <ul id="analysisList">
+            <li>Waiting for market data…</li>
+          </ul>
+        </div>
+
+        <div class="panel score">
+          <div class="panel-title">Historical Test</div>
+          <div class="score-number" id="backtestScore">—</div>
+          <small id="backtestText">Run a backtest after loading candles.</small>
+        </div>
+        <div id="historyPanel" class="panel history-panel hidden">
+          <div class="panel-title">Trade History</div>
+          <div class="history-stats">
+            <div><b id="winsCount">0</b><span>WIN</span></div>
+            <div><b id="lossesCount">0</b><span>LOSS</span></div>
+            <div><b id="pendingCount">0</b><span>PENDING</span></div>
+          </div>
+          <div id="historyList"></div>
+          <small class="history-note">Results can be recorded manually. Pending signals are also resolved automatically when the feed supplies the completed candle.</small>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" id="closeSettings">×</button>
+      <h2>Data Connection</h2>
+      <label>Data source
+        <select id="dataSource">
+          <option value="twelve">Twelve Data · Live Forex</option>
+          <option value="otc">Custom Broker/OTC Feed</option>
+        </select>
+      </label>
+      <div id="twelveField">
+        <p>For normal live forex pairs, enter your Twelve Data API key.</p>
+        <label>API key <input id="apiKey" type="password" placeholder="Paste API key"></label>
+        <label id="streamField">Live streaming <select id="streamMode"><option value="auto">Auto (WebSocket + polling fallback)</option><option value="poll">Polling only</option></select></label>
+      </div>
+      <div id="otcField" class="hidden">
+        <p>OTC requires a venue-specific feed. Enter your own server/proxy URL that returns JSON candles. Do not put a private broker login in this page.</p>
+        <label>OTC feed URL <input id="otcFeedUrl" type="url" placeholder="https://your-server.example/api/candles"></label>
+        <p class="tiny">The page will send <code>?symbol=...&interval=...</code> to this URL. Your server should return <code>{values:[{time,open,high,low,close}]}</code> or <code>{candles:[...]}</code>.</p>
+      </div>
+      <button id="saveSettings" class="primary">Save & Connect</button>
+      <p class="tiny">A public GitHub Pages site cannot safely hide private API credentials. Use a server-side proxy for private OTC feeds.</p>
+    </div>
+  </div>
+
+  <div id="infoModal" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" id="closeInfo">×</button>
+      <h2 id="infoTitle">Awan Prediction AI</h2>
+      <div id="infoBody"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

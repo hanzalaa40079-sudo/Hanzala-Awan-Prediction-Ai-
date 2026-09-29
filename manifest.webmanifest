@@ -1,0 +1,10 @@
+{
+  "name":"Awan Prediction AI",
+  "short_name":"Awan AI",
+  "start_url":".",
+  "display":"standalone",
+  "background_color":"#030807",
+  "theme_color":"#06110d",
+  "description":"Live forex analysis and experimental two-candle prediction.",
+  "icons":[{"src":"profile.jpg","sizes":"192x192","type":"image/jpeg"},{"src":"profile.jpg","sizes":"512x512","type":"image/jpeg"}]
+}
